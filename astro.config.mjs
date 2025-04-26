@@ -25,7 +25,7 @@ export default defineConfig({
 					tag: 'meta',
 					attrs: {
 						property: 'og:image',
-						content: 'https://usestyled.vercel.app/ogimage.png',
+						content: 'https://usestyled.com/ogimage.png',
 					},
 				},
 			],
