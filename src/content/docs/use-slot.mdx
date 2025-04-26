@@ -1,42 +1,42 @@
 ---
-title: useSlot para Componentes Compostos
-description: Crie APIs de componentes complexos e intuitivas com o padrão Compound Components usando useSlot.
+title: useSlot for Compound Components
+description: Create complex and intuitive component APIs with the Compound Components pattern using useSlot.
 ---
 
-O hook `useSlot` é uma ferramenta poderosa para criar **Componentes Compostos** (Compound Components) de forma declarativa e organizada. Ele permite agrupar vários subcomponentes relacionados sob um componente principal, resultando em APIs mais expressivas e fáceis de usar.
+The `useSlot` hook is a powerful tool for creating **Compound Components** declaratively and organizedly. It allows grouping several related subcomponents under a main component, resulting in more expressive and easier-to-use APIs.
 
-## O Problema: Gerenciando Componentes Complexos
+## The Problem: Managing Complex Components
 
-Frequentemente, precisamos construir componentes de UI que são compostos por várias partes distintas, mas logicamente conectadas. Pense em um `Card` (com `Card.Header`, `Card.Body`, `Card.Footer`) ou um `Header` de aplicativo (com seções `Left`, `Center`, `Right`).
+Often, we need to build UI components composed of several distinct but logically connected parts. Think of a `Card` (with `Card.Header`, `Card.Body`, `Card.Footer`) or an application `Header` (with `Left`, `Center`, `Right` sections).
 
-Tradicionalmente, implementar isso poderia envolver:
+Traditionally, implementing this could involve:
 
-*   Exportar múltiplos componentes separadamente (`Header`, `HeaderLeft`, `HeaderRight`, ...), o que pode poluir o namespace.
-*   Usar `React.Context` para comunicação implícita entre as partes, o que pode adicionar complexidade.
-*   Passar componentes como props, o que pode tornar a API de uso menos intuitiva.
+*   Exporting multiple components separately (`Header`, `HeaderLeft`, `HeaderRight`, ...), which can pollute the namespace.
+*   Using `React.Context` for implicit communication between parts, which can add complexity.
+*   Passing components as props, which can make the usage API less intuitive.
 
-## A Solução: `useSlot` para Componentes Compostos
+## The Solution: `useSlot` for Compound Components
 
-`useSlot` oferece uma abordagem diferente e elegante. Você define um objeto de configuração onde as chaves representam os "slots" (as partes do seu componente composto) e os valores são os componentes React (ou componentes estilizados com `useStyled`) que devem renderizar em cada slot.
+`useSlot` offers a different and elegant approach. You define a configuration object where the keys represent the "slots" (the parts of your compound component) and the values are the React components (or styled components with `useStyled`) that should render in each slot.
 
-O `useSlot` então retorna um componente principal que tem os componentes dos slots **anexados como propriedades estáticas**. Isso permite a sintaxe intuitiva como `MeuComponente.SlotA` ou `MeuComponente.SlotB.SubSlot`.
+`useSlot` then returns a main component that has the slot components **attached as static properties**. This allows for intuitive syntax like `MyComponent.SlotA` or `MyComponent.SlotB.SubSlot`.
 
-## Exemplo Completo: Um Componente `Card`
+## Complete Example: A `Card` Component
 
-Vamos ver como criar um componente `Card` composto por um `Header` (com `Title`), `Body` e `Footer` usando `useStyled` para estilização e `useSlot` para a estrutura composta.
+Let's see how to create a `Card` component composed of a `Header` (with `Title`), `Body`, and `Footer` using `useStyled` for styling and `useSlot` for the compound structure.
 
-**1. Definir os Componentes de Base/Estilizados:**
+**1. Define Base/Styled Components:**
 
-Primeiro, criamos os componentes que representarão cada parte visual do nosso Card usando `useStyled`.
+First, we create the components that will represent each visual part of our Card using `useStyled`.
 
 ```tsx
 import React from 'react';
 import { useStyled, useSlot } from 'use-styled';
-import { View, Text } from 'react-native'; // Ou 'div', 'h2', 'p' para web
+import { View, Text } from 'react-native'; // Or 'div', 'h2', 'p' for web
 
-// --- Definição dos Componentes Base ---
+// --- Base Component Definitions ---
 
-// O container principal do Card
+// The main Card container
 const CardRoot = useStyled(View, {
   base: {
     className: 'border border-gray-300 rounded-lg shadow-md overflow-hidden bg-white',
@@ -54,40 +54,40 @@ const CardRoot = useStyled(View, {
   }
 });
 
-// A seção do Header
+// The Header section
 const CardHeader = useStyled(View, {
   base: {
     className: 'px-4 py-3 border-b border-gray-200 bg-gray-50',
   },
 });
 
-// O título dentro do Header
+// The title within the Header
 const CardTitle = useStyled(Text, {
   base: {
     className: 'text-lg font-semibold text-gray-800',
   },
 });
 
-// O corpo principal do Card
+// The main body of the Card
 const CardBody = useStyled(View, {
   base: {
     className: 'p-4',
   },
 });
 
-// Texto padrão dentro do corpo do Card
+// Default text within the Card body
 const CardBodyText = useStyled(Text, {
   base: {
-    className: 'text-gray-700', // Estilo padrão para o texto do corpo
+    className: 'text-gray-700', // Default style for body text
   },
   variants: {
     muted: {
-      true: { className: 'text-gray-500 text-sm' } // Variante opcional para texto 'muted'
+      true: { className: 'text-gray-500 text-sm' } // Optional variant for 'muted' text
     }
   }
 });
 
-// O rodapé do Card
+// The Card footer
 const CardFooter = useStyled(View, {
   base: {
     className: 'px-4 py-3 border-t border-gray-200 bg-gray-50',
@@ -95,59 +95,59 @@ const CardFooter = useStyled(View, {
 });
 ```
 
-**2. Criar o Componente Composto `Card` com `useSlot`:**
+**2. Create the `Card` Compound Component with `useSlot`:**
 
-Agrupamos os componentes definidos acima nos slots correspondentes usando `useSlot`.
+We group the components defined above into their corresponding slots using `useSlot`.
 
 ```tsx
-// --- Criação do Componente Composto ---
+// --- Compound Component Creation ---
 
 export const Card = useSlot({
-  Root: CardRoot,      // Componente para <Card>
+  Root: CardRoot,      // Component for <Card>
   Header: {
-    Root: CardHeader,  // Componente para <Card.Header>
-    Title: CardTitle,  // Componente para <Card.Header.Title>
+    Root: CardHeader,  // Component for <Card.Header>
+    Title: CardTitle,  // Component for <Card.Header.Title>
   },
-  Body: { // Agora Body é um objeto com sub-slots
-    Root: CardBody,      // Componente para <Card.Body>
-    Text: CardBodyText,  // Componente para <Card.Body.Text>
+  Body: { // Body is now an object with sub-slots
+    Root: CardBody,      // Component for <Card.Body>
+    Text: CardBodyText,  // Component for <Card.Body.Text>
   },
-  Footer: CardFooter,    // Componente para <Card.Footer>
+  Footer: CardFooter,    // Component for <Card.Footer>
 });
 ```
 
-**3. Usar o Componente Composto `Card`:**
+**3. Use the `Card` Compound Component:**
 
-A utilização se torna muito declarativa e intuitiva.
+Usage becomes very declarative and intuitive.
 
 ```tsx
-// --- Uso do Componente Card ---
+// --- Using the Card Component ---
 
 function MyComponent() {
   return (
-    <Card shadowSize="lg"> {/* Props são passadas para Card.Root */}
+    <Card shadowSize="lg"> {/* Props are passed to Card.Root */}
       
       <Card.Header>
-        {/* Props podem ser passadas para Card.Header (CardHeader) */}
+        {/* Props can be passed to Card.Header (CardHeader) */}
         <Card.Header.Title>
-          {/* Props podem ser passadas para Card.Header.Title (CardTitle) */}
-          Título do Card
+          {/* Props can be passed to Card.Header.Title (CardTitle) */}
+          Card Title
         </Card.Header.Title>
       </Card.Header>
 
       <Card.Body>
-         {/* Usando o sub-slot Text */}
+         {/* Using the Text sub-slot */}
         <Card.Body.Text>
-          Este é o conteúdo principal do card.
+          This is the main content of the card.
         </Card.Body.Text>
         <Card.Body.Text muted={true} className="mt-2">
-          Esta é uma informação secundária.
+          This is secondary information.
         </Card.Body.Text>
       </Card.Body>
 
-      <Card.Footer className="flex-row justify-end"> {/* Props são passadas para Card.Footer */}
+      <Card.Footer className="flex-row justify-end"> {/* Props are passed to Card.Footer */}
         <button className="text-blue-600 hover:underline">
-          Ação no Rodapé
+          Action in Footer
         </button>
       </Card.Footer>
 
@@ -156,14 +156,14 @@ function MyComponent() {
 }
 ```
 
-Este exemplo demonstra como `useSlot` permite construir uma API de componente limpa e estruturada, onde cada parte do `Card` é acessível via propriedades estáticas, enquanto a estilização e a lógica interna são encapsuladas pelos componentes base definidos com `useStyled`.
+This example demonstrates how `useSlot` allows building a clean and structured component API, where each part of the `Card` is accessible via static properties, while styling and internal logic are encapsulated by the base components defined with `useStyled`.
 
-## Benefícios
+## Benefits
 
-*   **API Explícita e Intuitiva**: A sintaxe `Componente.Parte` torna óbvio como usar as diferentes seções do componente.
-*   **Organização**: Mantém a definição de todas as partes relacionadas em um único lugar (`useSlot`).
-*   **Reutilização**: Os componentes base (`RootFrame`, etc.) podem ser reutilizados em outros lugares se necessário.
-*   **Composição Clara**: Facilita a visualização e a composição da estrutura do componente.
-*   **Tipagem (Potencial)**: Abre portas para tipar fortemente a estrutura esperada de filhos e as props de cada slot.
+*   **Explicit and Intuitive API**: The `Component.Part` syntax makes it obvious how to use the different sections of the component.
+*   **Organization**: Keeps the definition of all related parts in one place (`useSlot`).
+*   **Reusability**: Base components (`RootFrame`, etc.) can be reused elsewhere if needed.
+*   **Clear Composition**: Facilitates visualizing and composing the component structure.
+*   **Typing (Potential)**: Opens doors for strongly typing the expected children structure and props for each slot.
 
-`useSlot` oferece uma maneira poderosa e declarativa de construir UIs complexas e manter suas APIs de componentes limpas e fáceis de entender.
+`useSlot` offers a powerful and declarative way to build complex UIs and keep your component APIs clean and easy to understand.

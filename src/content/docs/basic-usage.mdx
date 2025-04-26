@@ -1,22 +1,22 @@
 ---
-title: Uso Básico
-description: Uma solução leve e elegante para componentes estilizados com suporte a variantes em React e React Native.
+title: Basic Usage
+description: A lightweight and elegant solution for styled components with variant support in React and React Native.
 ---
 
-O `use-styled` permite criar componentes estilizados de forma declarativa, separando a lógica de estilo da lógica do componente. A configuração principal é feita através de um objeto passado como segundo argumento para o hook `useStyled`. Vamos explorar as propriedades chave:
+`use-styled` allows you to create styled components declaratively, separating the style logic from the component logic. The main configuration is done through an object passed as the second argument to the `useStyled` hook. Let's explore the key properties:
 
 ## `base`
 
-A propriedade `base` define os estilos e props que serão aplicados incondicionalmente ao componente. É útil para estilos e atributos que não mudam, independentemente das variantes.
+The `base` property defines the styles and props that will be applied unconditionally to the component. It's useful for styles and attributes that don't change, regardless of the variants.
 
-Você pode passar qualquer prop válida para o elemento ou componente base que você está estilizando. Isso inclui:
+You can pass any valid prop for the base element or component you are styling. This includes:
 
--   Atributos HTML padrão (ex: `type="button"` para um elemento `<button>`)
--   Atributos `data-*` (ex: `data-testid="meu-botao"`)
--   Manipuladores de eventos (ex: `onClick` para React, `onPress` para React Native)
--   Qualquer outra prop que o componente base aceite.
+-   Standard HTML attributes (e.g., `type="button"` for a `<button>` element)
+-   `data-*` attributes (e.g., `data-testid="my-button"`)
+-   Event handlers (e.g., `onClick` for React, `onPress` for React Native)
+-   Any other prop that the base component accepts.
 
-O melhor de tudo é que você terá o **IntelliSense do TypeScript** para ajudar a autocompletar e validar essas props!
+The best part is that you'll have **TypeScript IntelliSense** to help autocomplete and validate these props!
 
 ```tsx
 import { useStyled } from 'use-styled';
@@ -24,21 +24,21 @@ import { useStyled } from 'use-styled';
 const Button = useStyled('button', {
   base: {
     className: 'px-4 py-2 rounded font-semibold transition-colors',
-    type: 'button', // Atributo HTML padrão
-    'data-testid': 'basic-button', // Atributo data-*
-    // onClick: () => console.log('Clicked!'), // Manipulador de evento
+    type: 'button', // Standard HTML attribute
+    'data-testid': 'basic-button', // data-* attribute
+    // onClick: () => console.log('Clicked!'), // Event handler
   },
-  // ... outras configurações
+  // ... other configurations
 });
 ```
 
-Neste exemplo, além das classes, o botão sempre terá `type="button"` e `data-testid="basic-button"`.
+In this example, besides the classes, the button will always have `type="button"` and `data-testid="basic-button"`.
 
 ## `variants`
 
-As `variants` permitem definir diferentes estilos ou props com base em propriedades específicas passadas ao componente. Cada chave no objeto `variants` representa uma *propriedade de variante* (ex: `intent`, `size`), e seus valores definem os estilos para cada *valor de variante* possível (ex: `primary`, `secondary` para `intent`).
+`variants` allow you to define different styles or props based on specific properties passed to the component. Each key in the `variants` object represents a *variant property* (e.g., `intent`, `size`), and its values define the styles for each possible *variant value* (e.g., `primary`, `secondary` for `intent`).
 
-Os valores das variantes podem ser strings, **mas também podem ser booleanos**, o que é ótimo para variantes que representam estados binários (ligado/desligado), como `disabled`, `active`, ou `outlined`.
+Variant values can be strings, **but they can also be booleans**, which is great for variants representing binary states (on/off), such as `disabled`, `active`, or `outlined`.
 
 ```tsx
 import { useStyled } from 'use-styled';
@@ -56,22 +56,22 @@ const Button = useStyled('button', {
     },
     disabled: {
       true: { className: 'opacity-50 cursor-not-allowed' },
-      // false (opcional): pode ter estilos específicos quando não está desabilitado
+      // false (optional): can have specific styles when not disabled
     },
   },
-  // ... outras configurações
+  // ... other configurations
 });
 
-// Uso:
+// Usage:
 <Button intent="primary" size="large">Click Me</Button>
 <Button intent="secondary" disabled>Cannot Click</Button>
 ```
 
-Aqui, um `Button` com `intent="primary"` terá fundo azul e texto branco, enquanto `intent="secondary"` terá fundo cinza e texto preto. A variante `size` controla o padding e o tamanho da fonte. A variante booleana `disabled` aplica estilos de opacidade e cursor quando `true`.
+Here, a `Button` with `intent="primary"` will have a blue background and white text, while `intent="secondary"` will have a gray background and black text. The `size` variant controls padding and font size. The boolean `disabled` variant applies opacity and cursor styles when `true`.
 
 ## `defaultVariants`
 
-Se você quiser que uma variante tenha um valor padrão caso nenhuma prop correspondente seja passada, use `defaultVariants`.
+If you want a variant to have a default value in case no corresponding prop is passed, use `defaultVariants`.
 
 ```tsx
 import { useStyled } from 'use-styled';
@@ -86,17 +86,17 @@ const Button = useStyled('button', {
     intent: 'primary',
     size: 'small',
   },
-  // ... outras configurações
+  // ... other configurations
 });
 
-// Uso:
-<Button>Click Me</Button> // Será `intent="primary"` e `size="small"` por padrão
-<Button intent="secondary">Outro Botão</Button> // Será `intent="secondary"` e `size="small"`
+// Usage:
+<Button>Click Me</Button> // Will be `intent="primary"` and `size="small"` by default
+<Button intent="secondary">Another Button</Button> // Will be `intent="secondary"` and `size="small"`
 ```
 
 ## `compoundVariants`
 
-Às vezes, você precisa aplicar estilos específicos apenas quando uma *combinação* de variantes está ativa. É para isso que servem as `compoundVariants`. Elas recebem um array de objetos, onde cada objeto define as `variants` da combinação e as `props` (geralmente `className` ou `style`) a serem aplicadas.
+Sometimes, you need to apply specific styles only when a *combination* of variants is active. That's what `compoundVariants` are for. They receive an array of objects, where each object defines the `variants` of the combination and the `props` (usually `className` or `style`) to be applied.
 
 ```tsx
 import { useStyled } from 'use-styled';
@@ -115,27 +115,27 @@ const Button = useStyled('button', {
       intent: 'primary',
       outlined: true,
       props: {
-        className: 'border-blue-500 text-blue-500 hover:bg-blue-50', // Estilo específico para primary + outlined
+        className: 'border-blue-500 text-blue-500 hover:bg-blue-50', // Specific style for primary + outlined
       }
     },
     {
       intent: 'secondary',
       outlined: true,
       props: {
-        className: 'border-gray-500 text-gray-500 hover:bg-gray-100', // Estilo específico para secondary + outlined
+        className: 'border-gray-500 text-gray-500 hover:bg-gray-100', // Specific style for secondary + outlined
       }
     },
   ],
 });
 
-// Uso:
+// Usage:
 <Button intent="primary" outlined={true}>Primary Outlined</Button>
 ```
 
-Neste caso, a combinação `intent="primary"` e `outlined={true}` recebe estilos específicos que sobrescrevem ou complementam os estilos base e das variantes individuais.
+In this case, the combination `intent="primary"` and `outlined={true}` receives specific styles that override or complement the base styles and individual variant styles.
 
 ---
 
-## Próximos Passos: Estruturando Componentes
+## Next Steps: Structuring Components
 
-Além de estilizar componentes individuais com `useStyled`, você pode querer estruturar componentes mais complexos com partes distintas (como um Card com Header e Body). Para isso, explore o hook [`useSlot`](../use-slot), que facilita a criação de Componentes Compostos com uma API limpa.
+Besides styling individual components with `useStyled`, you might want to structure more complex components with distinct parts (like a Card with Header and Body). For this, explore the [`useSlot`](../use-slot) hook, which facilitates the creation of Compound Components with a clean API.

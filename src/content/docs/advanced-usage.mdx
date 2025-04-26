@@ -1,17 +1,16 @@
 ---
-title: Uso Avançado
-description: Explore técnicas avançadas como sobrescrita de estilos, composição, refs, componentes de terceiros e animação com use-styled.
+title: Advanced Usage
+description: Explore advanced techniques like style overriding, composition, refs, third-party components, and animation with use-styled.
 ---
 
+Beyond the basics, `use-styled` offers flexibility for more complex scenarios. Let's explore some advanced techniques.
 
-Além do básico, o `use-styled` oferece flexibilidade para cenários mais complexos. Vamos explorar algumas técnicas avançadas.
+## Overriding Styles (`className` and `style`)
 
-## Sobrescrevendo Estilos (`className` e `style`)
+While the configuration (`base`, `variants`, etc.) defines the main styles, you'll often need to apply specific styles or modifiers directly to the component instance. `use-styled` intelligently merges `className` and `style` props passed directly with those defined in the configuration.
 
-Embora a configuração (`base`, `variants`, etc.) defina os estilos principais, você frequentemente precisará aplicar estilos pontuais ou modificadores diretamente na instância do componente. O `use-styled` mescla inteligentemente as props `className` e `style` passadas diretamente com aquelas definidas na configuração.
-
--   **`className`**: As classes passadas diretamente são combinadas com as classes da configuração usando `clsx` e `tailwind-merge`. Isso significa que você pode adicionar novas classes ou até sobrescrever utilitários conflitantes do Tailwind/NativeWind.
--   **`style`** (React Native): Os objetos de estilo passados diretamente são mesclados (shallow merge) com os estilos da configuração. Propriedades definidas diretamente têm precedência.
+-   **`className`**: Classes passed directly are combined with the configuration classes using `clsx` and `tailwind-merge`. This means you can add new classes or even override conflicting Tailwind/NativeWind utilities.
+-   **`style`** (React Native): Style objects passed directly are merged (shallow merge) with the configuration styles. Directly defined properties take precedence.
 
 ```tsx
 import { useStyled } from 'use-styled';
@@ -27,55 +26,55 @@ const Button = useStyled('button', {
 
 function MyComponent() {
   return (
-    <Button 
-      size="large" 
-      className="bg-red-500 mt-4" // Sobrescreve bg-blue-500 e adiciona margem
+    <Button
+      size="large"
+      className="bg-red-500 mt-4" // Overrides bg-blue-500 and adds margin
     >
-      Botão Grande e Vermelho
+      Large Red Button
     </Button>
   );
 }
 ```
 
-Neste exemplo, o botão `large` teria `bg-blue-500`, mas o `className="bg-red-500 mt-4"` passado diretamente tem prioridade devido ao `tailwind-merge`, resultando em um botão vermelho com margem superior.
+In this example, the `large` button would have `bg-blue-500`, but the `className="bg-red-500 mt-4"` passed directly takes priority due to `tailwind-merge`, resulting in a red button with top margin.
 
-:::caution[Atenção: Usando `style` e `className` Juntos]
+:::caution[Caution: Using `style` and `className` Together]
 
-Embora o `use-styled` mescle ambas as props, é importante entender como elas interagem no elemento final:
+Although `use-styled` merges both props, it's important to understand how they interact on the final element:
 
-1.  **Precedência:** Em navegadores web e React Native, estilos definidos na prop `style` (inline) geralmente têm **maior precedência** do que estilos definidos via `className` (classes CSS) quando ambos tentam modificar a mesma propriedade CSS (ex: `backgroundColor`). O valor de `style` prevalecerá.
-2.  **Performance:** Definir a mesma propriedade de estilo tanto em `className` quanto em `style` (seja na configuração ou passado diretamente) é **ineficiente**. Ambas as fontes serão processadas pela biblioteca e pelo motor de renderização, mas apenas o estilo inline (`style`) será aplicado no final para a propriedade conflitante. Isso pode levar a processamento desnecessário.
+1.  **Precedence:** In web browsers and React Native, styles defined in the `style` prop (inline) generally have **higher precedence** than styles defined via `className` (CSS classes) when both attempt to modify the same CSS property (e.g., `backgroundColor`). The `style` value will prevail.
+2.  **Performance:** Defining the same style property in both `className` and `style` (either in the configuration or passed directly) is **inefficient**. Both sources will be processed by the library and the rendering engine, but only the inline style (`style`) will ultimately be applied for the conflicting property. This can lead to unnecessary processing.
 
-**Recomendação:**
+**Recommendation:**
 
-*   **Prefira `className`** para a maioria dos estilos, especialmente ao usar Tailwind CSS ou NativeWind.
-*   Use `style` para propriedades que não são facilmente representadas por classes utilitárias ou para valores dinâmicos calculados em tempo de execução.
-*   **Evite definir a mesma propriedade CSS em ambas as props (`style` e `className`)** para o mesmo componente para garantir clareza e melhor performance.
+*   **Prefer `className`** for most styles, especially when using Tailwind CSS or NativeWind.
+*   Use `style` for properties that are not easily represented by utility classes or for dynamic values calculated at runtime.
+*   **Avoid defining the same CSS property in both props (`style` and `className`)** for the same component to ensure clarity and better performance.
 
 :::
 
-## Estilizando Componentes de Terceiros
+## Styling Third-Party Components
 
-Uma grande vantagem do `use-styled` é sua capacidade de envolver e configurar componentes de *qualquer* biblioteca ou mesmo seus próprios componentes customizados. Ele não se limita a passar `className` ou `style`.
+A major advantage of `use-styled` is its ability to wrap and configure components from *any* library or even your own custom components. It's not limited to passing `className` or `style`.
 
-Você pode usar a configuração (`base`, `variants`, `compoundVariants`) para definir **qualquer prop** que o componente base (o primeiro argumento do `useStyled`) aceite. Isso permite não apenas estilizar, mas também configurar o comportamento ou o conteúdo do componente de terceiro de forma condicional através das variantes.
+You can use the configuration (`base`, `variants`, `compoundVariants`) to define **any prop** that the base component (the first argument of `useStyled`) accepts. This allows not only styling but also configuring the behavior or content of the third-party component conditionally through variants.
 
-**Exemplos Comuns (Focando em Estilos):**
+**Common Examples (Focusing on Styles):**
 
-Embora você possa passar qualquer prop, os casos mais comuns ainda envolvem `className` (para web e NativeWind) e `style` (para React Native), quando o componente de terceiro os suporta:
+Although you can pass any prop, the most common cases still involve `className` (for web and NativeWind) and `style` (for React Native), when the third-party component supports them:
 
-**Exemplo (React com um componente `DatePicker` hipotético):**
+**Example (React with a hypothetical `DatePicker` component):**
 
 ```tsx
 import React from 'react';
 import { useStyled } from 'use-styled';
-import HypotheticalDatePicker from 'some-ui-library'; // Componente de terceiro
+import HypotheticalDatePicker from 'some-ui-library'; // Third-party component
 
-// Estilizando o DatePicker
+// Styling the DatePicker
 const StyledDatePicker = useStyled(HypotheticalDatePicker, {
   base: {
     className: 'border rounded shadow-sm p-2',
-    // Props específicas do HypotheticalDatePicker podem ir aqui também
+    // Specific props of HypotheticalDatePicker can also go here
     dateFormat: 'dd/MM/yyyy',
   },
   variants: {
@@ -92,18 +91,18 @@ function MyForm() {
 }
 ```
 
-**Exemplo (React Native com `TouchableOpacity` de `react-native-gesture-handler`):**
+**Example (React Native with `TouchableOpacity` from `react-native-gesture-handler`):**
 
 ```tsx
 import React from 'react';
 import { Text } from 'react-native';
 import { useStyled } from 'use-styled';
-import { TouchableOpacity } from 'react-native-gesture-handler'; // Usando de RNGH
+import { TouchableOpacity } from 'react-native-gesture-handler'; // Using from RNGH
 
 const GestureButton = useStyled(TouchableOpacity, {
   base: {
     className: 'p-3 rounded-md',
-    activeOpacity: 0.7, // Prop específica do TouchableOpacity
+    activeOpacity: 0.7, // Specific prop of TouchableOpacity
   },
   variants: {
     intent: {
@@ -138,11 +137,11 @@ function MyScreen() {
 }
 ```
 
-Basta passar o componente da biblioteca como primeiro argumento para `useStyled` e configurar os estilos e variantes como de costume. Você também pode passar props específicas do componente de terceiro diretamente no `base` ou `variants`.
+Simply pass the library component as the first argument to `useStyled` and configure the styles and variants as usual. You can also pass specific props of the third-party component directly in `base` or `variants`.
 
-**Exemplo Avançado (React Native com `@hugeicons/react-native` - Passando Props Arbitrárias):**
+**Advanced Example (React Native with `@hugeicons/react-native` - Passing Arbitrary Props):**
 
-Este exemplo demonstra como usar variantes para controlar props que *não* são `className` ou `style`. Aqui, controlamos qual ícone (`icon`) é renderizado e seu tamanho (`className` para estilização) com base nas variantes `icon` e `size`.
+This example demonstrates how to use variants to control props that are *not* `className` or `style`. Here, we control which icon (`icon`) is rendered and its size (`className` for styling) based on the `icon` and `size` variants.
 
 ```tsx
 import { HugeiconsIcon } from '@hugeicons/react-native'
@@ -152,18 +151,18 @@ import {
 	ArrowRight01Icon,
 	ArrowUp01Icon,
 	Settings02Icon,
-} from '@hugeicons-pro/core-stroke-rounded' // Exemplo, use seus ícones
+} from '@hugeicons-pro/core-stroke-rounded' // Example, use your icons
 
 import { useStyled } from 'use-styled'
 
 export const Icon = useStyled(HugeiconsIcon, {
 	base: {
-    // Props base específicas do HugeiconsIcon poderiam ir aqui
+    // Specific base props of HugeiconsIcon could go here
   },
 	variants: {
-		icon: { // Variante para controlar qual ícone mostrar
+		icon: { // Variant to control which icon to show
 			ArrowUp: {
-				icon: ArrowUp01Icon, // Passando a prop 'icon'
+				icon: ArrowUp01Icon, // Passing the 'icon' prop
 			},
 			ArrowDown: {
 				icon: ArrowDown01Icon,
@@ -178,9 +177,9 @@ export const Icon = useStyled(HugeiconsIcon, {
 				icon: Settings02Icon,
 			},
 		},
-		size: { // Variante para controlar o tamanho via className
+		size: { // Variant to control size via className
 			sm: {
-				className: 'w-8 h-8', // Aplicando estilos de tamanho
+				className: 'w-8 h-8', // Applying size styles
 			},
 			md: {
 				className: 'w-10 h-10',
@@ -195,37 +194,37 @@ export const Icon = useStyled(HugeiconsIcon, {
 	},
 })
 
-// Uso:
+// Usage:
 function MyComponent() {
   return (
     <>
-      <Icon icon="ArrowUp" size="lg" className="text-blue-500" /> 
+      <Icon icon="ArrowUp" size="lg" className="text-blue-500" />
       <Icon icon="Settings" size="sm" className="text-gray-700" />
-      {/* Note que className aqui sobrescreve/adiciona à variante de tamanho */}
+      {/* Note that className here overrides/adds to the size variant */}
     </>
   )
 }
 ```
 
-Este padrão é extremamente poderoso para criar componentes configuráveis e abstratos em cima de outras bibliotecas.
+This pattern is extremely powerful for creating configurable and abstract components on top of other libraries.
 
-## Estruturando Componentes Complexos com `useSlot`
+## Structuring Complex Components with `useSlot`
 
-Enquanto `useStyled` foca em estilizar um *único* componente base, o hook [`useSlot`](../use-slot) permite criar **Componentes Compostos**, agrupando subcomponentes relacionados sob uma API unificada.
+While `useStyled` focuses on styling a *single* base component, the [`useSlot`](../use-slot) hook allows creating **Compound Components**, grouping related subcomponents under a unified API.
 
-Isso é ideal para componentes com partes distintas, como um `Button` que contém um `Button.Text` específico.
+This is ideal for components with distinct parts, like a `Button` containing a specific `Button.Text`.
 
-**Exemplo: Criando um `Button` Composto**
+**Example: Creating a Composite `Button`**
 
-1.  **Defina os componentes base estilizados:**
+1.  **Define the styled base components:**
 
     ```tsx
     import React from 'react';
     import { useStyled, useSlot } from 'use-styled';
-    import { Pressable, Text } from 'react-native'; // Ou 'button'/'span' para web
+    import { Pressable, Text } from 'react-native'; // Or 'button'/'span' for web
 
-    // Componente raiz do botão
-    const ButtonRoot = useStyled(Pressable, { /* ...configuração useStyled... */ 
+    // Button root component
+    const ButtonRoot = useStyled(Pressable, { /* ...useStyled config... */
       base: { className: 'px-4 py-2 rounded-md flex-row items-center justify-center' },
       variants: {
         intent: {
@@ -236,8 +235,8 @@ Isso é ideal para componentes com partes distintas, como um `Button` que conté
       defaultVariants: { intent: 'primary' },
     });
 
-    // Componente para o texto dentro do botão
-    const ButtonTextContent = useStyled(Text, { /* ...configuração useStyled... */ 
+    // Component for the text inside the button
+    const ButtonTextContent = useStyled(Text, { /* ...useStyled config... */
       base: { className: 'font-medium text-base' },
       variants: {
         intent: {
@@ -249,51 +248,51 @@ Isso é ideal para componentes com partes distintas, como um `Button` que conté
     });
     ```
 
-2.  **Crie o componente composto com `useSlot`:**
+2.  **Create the compound component with `useSlot`:**
 
     ```tsx
-    // Cria o componente composto Button
+    // Creates the Button compound component
     export const Button = useSlot({
-      Root: ButtonRoot,        // Componente para <Button>
-      Text: ButtonTextContent,  // Componente para <Button.Text>
+      Root: ButtonRoot,        // Component for <Button>
+      Text: ButtonTextContent,  // Component for <Button.Text>
     });
     ```
 
-3.  **Use a API composta:**
+3.  **Use the compound API:**
 
     ```tsx
     function MyComponent() {
       return (
         <View className="gap-4">
           <Button intent="primary" onPress={() => alert('Pressed!')}>
-            <Button.Text>Botão Primário</Button.Text>
+            <Button.Text>Primary Button</Button.Text>
           </Button>
 
           <Button intent="secondary">
-            {/* A prop 'intent' é passada implicitamente ou pode ser explícita */}
-            <Button.Text intent="secondary">Botão Secundário</Button.Text>
+            {/* The 'intent' prop is passed implicitly or can be explicit */}
+            <Button.Text intent="secondary">Secondary Button</Button.Text>
           </Button>
         </View>
       );
     }
     ```
 
-Esta abordagem cria uma API clara (`Button` e `Button.Text`) e encapsula a lógica de estilização e composição.
+This approach creates a clear API (`Button` and `Button.Text`) and encapsulates the styling and composition logic.
 
-**➡️ Veja a página dedicada ao [`useSlot`](../use-slot) para uma explicação mais aprofundada e outros exemplos.**
+**➡️ See the dedicated [`useSlot`](../use-slot) page for a more in-depth explanation and other examples.**
 
-## Integração com Animação
+## Integration with Animation
 
-O `use-styled` funciona perfeitamente com bibliotecas de animação populares como `Motion` (web) ou `Reanimated` / `Moti` (React Native). A chave é passar o componente animado da biblioteca como o primeiro argumento para `useStyled`.
+`use-styled` works perfectly with popular animation libraries like `Motion` (web) or `Reanimated` / `Moti` (React Native). The key is to pass the animated component from the library as the first argument to `useStyled`.
 
-**Exemplo (React com Motion):**
+**Example (React with Motion):**
 
 ```tsx
 import React from 'react';
 import { useStyled } from 'use-styled';
 import * as motion from 'motion/react-client'
 
-// Estilizando um motion.div
+// Styling a motion.div
 const AnimatedBox = useStyled(motion.div, {
   base: {
     className: 'w-24 h-24 rounded-lg',
@@ -311,32 +310,32 @@ const AnimatedBox = useStyled(motion.div, {
 
 function PulsingBox() {
   return (
-    <AnimatedBox 
-      color="red" 
-      // Props do Motion são passadas diretamente
+    <AnimatedBox
+      color="red"
+      // Motion props are passed directly
       initial={{ scale: 0.8, opacity: 0.5 }}
       animate={{ scale: 1, opacity: 1 }}
-      transition={{ 
-        duration: 0.8, 
-        repeat: Infinity, 
-        repeatType: "reverse" 
+      transition={{
+        duration: 0.8,
+        repeat: Infinity,
+        repeatType: "reverse"
       }}
     />
   );
 }
 ```
 
-**Exemplo (React Native com Moti):**
+**Example (React Native with Moti):**
 
 ```tsx
 import React from 'react';
 import { useStyled } from 'use-styled';
-import { MotiView } from 'moti'; // Usando MotiView
-// Para Reanimated, você criaria um Animated.View e o passaria:
+import { MotiView } from 'moti'; // Using MotiView
+// For Reanimated, you would create an Animated.View and pass it:
 // import Animated from 'react-native-reanimated';
 // const AnimatedView = Animated.createAnimatedComponent(View);
 
-const AnimatedPressable = useStyled(MotiView, { // Ou AnimatedView
+const AnimatedPressable = useStyled(MotiView, { // Or AnimatedView
   base: {
     className: 'w-40 h-40 rounded-full justify-center items-center',
   },
@@ -355,14 +354,14 @@ function BouncingButton() {
   return (
     <AnimatedPressable
       intent="confirm"
-      // Props do Moti são passadas diretamente
+      // Moti props are passed directly
       from={{ scale: 0.9 }}
       animate={{ scale: 1 }}
       transition={{ type: 'spring', loop: true }}
     />
-    // Adicione um Text ou Icone dentro se necessário
+    // Add Text or Icon inside if needed
   );
 }
 ```
 
-Como `use-styled` simplesmente encaminha props desconhecidas, você pode passar todas as props de animação (`initial`, `animate`, `transition`, `from`, `exit`, etc.) diretamente para o componente estilizado, e elas funcionarão como esperado no componente `motion` ou `Moti` / `Reanimated` subjacente.
+Since `use-styled` simply forwards unknown props, you can pass all animation props (`initial`, `animate`, `transition`, `from`, `exit`, etc.) directly to the styled component, and they will work as expected on the underlying `motion` or `Moti` / `Reanimated` component.

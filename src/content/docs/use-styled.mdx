@@ -1,84 +1,83 @@
 ---
-title: Hook useStyled
-description: Referência completa para o hook useStyled, o coração da biblioteca para criar componentes estilizados com variantes.
+title: useStyled Hook
+description: Complete reference for the useStyled hook, the heart of the library for creating styled components with variants.
 ---
 
+The `useStyled` hook is the main API of the `use-styled` library. It allows you to create styled React and React Native components, encapsulating styling logic, variants, and default props declaratively.
 
-O hook `useStyled` é a principal API da biblioteca `use-styled`. Ele permite criar componentes React e React Native estilizados, encapsulando lógica de estilos, variantes e props padrão de forma declarativa.
+## Signature
 
-## Assinatura
-
-```typescript 
+```typescript
 function useStyled<T extends React.ElementType, C extends Config<T>>(
-  component: T, 
+  component: T,
   config: C
 ): StyledComponent<T, C>;
 ```
 
--   **`component`**: O componente base que você deseja estilizar.
--   **`config`**: Um objeto de configuração que define os estilos, variantes e comportamentos.
--   **Retorna**: Um novo componente React (`StyledComponent`) que aplica a configuração ao `component` base.
+-   **`component`**: The base component you want to style.
+-   **`config`**: A configuration object that defines styles, variants, and behaviors.
+-   **Returns**: A new React component (`StyledComponent`) that applies the configuration to the base `component`.
 
-## Argumento `component`
+## `component` Argument
 
-O primeiro argumento pode ser:
+The first argument can be:
 
-*   **String de Elemento HTML**: Ex: `'div'`, `'button'`, `'span'`. (Para React Web)
-*   **Componente React Native**: Ex: `View`, `Text`, `Pressable` de `react-native`.
-*   **Componente Funcional ou Classe React/React Native**: Qualquer componente customizado que aceite `className` e/ou `style`, além de outras props. `useStyled` inferirá automaticamente as props aceitas por este componente.
+*   **HTML Element String**: Ex: `'div'`, `'button'`, `'span'`. (For React Web)
+*   **React Native Component**: Ex: `View`, `Text`, `Pressable` from `react-native`.
+*   **Functional or Class React/React Native Component**: Any custom component that accepts `className` and/or `style`, along with other props. `useStyled` will automatically infer the props accepted by this component.
 
-## Argumento `config`
+## `config` Argument
 
-Este objeto define toda a lógica de estilização e variantes.
+This object defines all the styling and variant logic.
 
-### `base` (Opcional)
+### `base` (Optional)
 
-Um objeto contendo props que serão **sempre** aplicadas ao `Component` base.
+An object containing props that will **always** be applied to the base `Component`.
 
-*   Use `className` para aplicar classes CSS (Tailwind, NativeWind, etc.).
-*   Use `style` para aplicar estilos inline (objetos de estilo React/React Native).
-*   Passe quaisquer outras props válidas para o `Component` base (ex: `type`, `data-testid`, `accessibilityRole`, etc.).
+*   Use `className` to apply CSS classes (Tailwind, NativeWind, etc.).
+*   Use `style` to apply inline styles (React/React Native style objects).
+*   Pass any other valid props for the base `Component` (e.g., `type`, `data-testid`, `accessibilityRole`, etc.).
 
 ```js
 config: {
   base: {
     className: 'font-sans transition-colors',
     style: { margin: 0 },
-    type: 'button', // Se Component for 'button'
+    type: 'button', // If Component is 'button'
   }
 }
 ```
 
-### `variants` (Opcional)
+### `variants` (Optional)
 
-Define os diferentes estados visuais ou comportamentais do componente.
+Defines the different visual or behavioral states of the component.
 
-*   A chave principal é o **nome da variante** (que se tornará uma prop no componente final).
-*   As chaves internas são os **valores possíveis** para essa variante (strings ou booleanos).
-*   O valor final é um objeto de props (`className`, `style`, ou outras) a serem aplicadas quando essa variante específica estiver ativa.
+*   The main key is the **variant name** (which will become a prop on the final component).
+*   The inner keys are the **possible values** for that variant (strings or booleans).
+*   The final value is an object of props (`className`, `style`, or others) to be applied when that specific variant is active.
 
 ```js
 config: {
   variants: {
-    intent: { // Nome da variante: 'intent'
-      primary: { className: 'bg-blue-500 text-white' }, // Valor: 'primary'
-      secondary: { className: 'bg-gray-200 text-black' }, // Valor: 'secondary'
+    intent: { // Variant name: 'intent'
+      primary: { className: 'bg-blue-500 text-white' }, // Value: 'primary'
+      secondary: { className: 'bg-gray-200 text-black' }, // Value: 'secondary'
     },
-    size: { // Nome da variante: 'size'
+    size: { // Variant name: 'size'
       small: { className: 'px-2 py-1 text-sm' },
       medium: { className: 'px-4 py-2 text-base' },
     },
-    disabled: { // Nome da variante: 'disabled'
-      true: { className: 'opacity-50 cursor-not-allowed' }, // Valor booleano: true
-      // false: { ... } // Opcional: estilos para quando disabled={false}
+    disabled: { // Variant name: 'disabled'
+      true: { className: 'opacity-50 cursor-not-allowed' }, // Boolean value: true
+      // false: { ... } // Optional: styles for when disabled={false}
     }
   }
 }
 ```
 
-### `defaultVariants` (Opcional)
+### `defaultVariants` (Optional)
 
-Especifica os valores padrão para as variantes definidas. Se uma prop de variante não for passada para o componente estilizado, o valor definido aqui será usado.
+Specifies the default values for the defined variants. If a variant prop is not passed to the styled component, the value defined here will be used.
 
 ```js
 config: {
@@ -91,13 +90,13 @@ config: {
 }
 ```
 
-### `compoundVariants` (Opcional)
+### `compoundVariants` (Optional)
 
-Permite aplicar props adicionais **somente quando uma combinação específica de variantes** está ativa. É um array de objetos.
+Allows applying additional props **only when a specific combination of variants** is active. It's an array of objects.
 
-*   Cada objeto no array define as condições (pares `nomeVariante: valorVariante`).
-*   A propriedade `props` (ou diretamente `className`/`style`) dentro do objeto define as props a serem aplicadas quando **todas** as condições são atendidas.
-*   As props de `compoundVariants` são mescladas *após* as props de `base` e `variants` ativas.
+*   Each object in the array defines the conditions (pairs `variantName: variantValue`).
+*   The `props` property (or directly `className`/`style`) within the object defines the props to be applied when **all** conditions are met.
+*   Props from `compoundVariants` are merged *after* props from `base` and active `variants`.
 
 ```js
 config: {
@@ -106,15 +105,15 @@ config: {
     {
       intent: 'primary',
       disabled: true,
-      props: { 
+      props: {
         className: 'bg-blue-800 border-blue-900',
-        style: { /* pode adicionar estilos também */ }
+        style: { /* can add styles too */ }
       }
     },
     {
       intent: 'secondary',
       size: 'small',
-      props: { 
+      props: {
         style: { borderWidth: 1 }
       }
     }
@@ -122,27 +121,27 @@ config: {
 }
 ```
 
-## Prop Forwarding (Encaminhamento de Props)
+## Prop Forwarding
 
-Qualquer prop passada para o componente retornado por `useStyled` que **não** seja um nome de variante definido na `config` será automaticamente encaminhada para o `Component` base.
+Any prop passed to the component returned by `useStyled` that is **not** a variant name defined in the `config` will be automatically forwarded to the base `Component`.
 
-Isso inclui `ref`, manipuladores de evento (`onClick`, `onLayout`, etc.), atributos `data-*`, `aria-*`, `id`, e quaisquer outras props específicas do `Component` base.
+This includes `ref`, event handlers (`onClick`, `onLayout`, etc.), `data-*` attributes, `aria-*`, `id`, and any other props specific to the base `Component`.
 
-## Mesclagem de `className` e `style`
+## Merging `className` and `style`
 
-`useStyled` mescla inteligentemente as props `className` e `style` de todas as fontes (`base`, `variants`, `compoundVariants`, e props passadas diretamente ao componente):
+`useStyled` intelligently merges `className` and `style` props from all sources (`base`, `variants`, `compoundVariants`, and props passed directly to the component):
 
-*   **`className`**: Strings são combinadas usando `clsx`. Se você estiver usando Tailwind/NativeWind, os conflitos entre classes utilitárias são resolvidos automaticamente usando `tailwind-merge`.
-*   **`style`**: Objetos de estilo são mesclados (shallow merge).
-*   **Precedência**: Props passadas diretamente ao componente têm a maior precedência, seguidas por `compoundVariants`, `variants`, e por último `base`.
-*   **Atenção**: Conforme discutido em [Uso Avançado > Sobrescrevendo Estilos](../advanced-usage#atenção-usando-style-e-classname-juntos), evite definir a mesma propriedade em `style` e `className` para melhor performance e clareza.
+*   **`className`**: Strings are combined using `clsx`. If you are using Tailwind/NativeWind, conflicts between utility classes are automatically resolved using `tailwind-merge`.
+*   **`style`**: Style objects are merged (shallow merge).
+*   **Precedence**: Props passed directly to the component have the highest precedence, followed by `compoundVariants`, `variants`, and finally `base`.
+*   **Caution**: As discussed in [Advanced Usage > Overriding Styles](../advanced-usage#caution-using-style-and-classname-together), avoid defining the same property in both `style` and `className` for better performance and clarity.
 
-## Exemplo Completo
+## Complete Example
 
 ```tsx
 import React from 'react';
 import { useStyled } from 'use-styled';
-import { Pressable, Text } from 'react-native'; // Exemplo RN
+import { Pressable, Text } from 'react-native'; // RN Example
 
 const StyledButton = useStyled(Pressable, {
   base: {
@@ -175,7 +174,7 @@ const StyledButton = useStyled(Pressable, {
     disabled: false,
   },
   compoundVariants: [
-    // Estilos de texto e borda para variantes outline
+    // Text and border styles for outline variants
     {
       intent: 'primary',
       outline: true,
@@ -191,7 +190,7 @@ const StyledButton = useStyled(Pressable, {
       outline: true,
       props: { className: 'border-red-600 text-red-600' }
     },
-    // Ajuste para disabled + primary
+    // Adjustment for disabled + primary
     {
       intent: 'primary',
       disabled: true,
@@ -200,17 +199,17 @@ const StyledButton = useStyled(Pressable, {
   ],
 });
 
-// -- Uso --
+// -- Usage --
 function App() {
   return (
-    <StyledButton 
-      intent="danger" 
-      size="lg" 
-      outline 
-      onPress={() => console.log('Danger outline lg')} 
-      // className="mt-4" // Pode passar className direto também
+    <StyledButton
+      intent="danger"
+      size="lg"
+      outline
+      onPress={() => console.log('Danger outline lg')}
+      // className="mt-4" // Can also pass className directly
     >
-      {/* Idealmente, usar Button.Text de useSlot aqui, mas para simplificar: */}
+      {/* Ideally, use Button.Text from useSlot here, but for simplicity: */}
       <Text className="text-red-600 text-lg font-semibold">Delete Action</Text>
     </StyledButton>
   );
@@ -219,4 +218,4 @@ function App() {
 
 ## TypeScript
 
-`useStyled` possui forte integração com TypeScript. Ele infere as props permitidas do `Component` base e valida a `config`. Veja mais na página [Integração com TypeScript](../typescript).
+`useStyled` has strong TypeScript integration. It infers allowed props from the base `Component` and validates the `config`. See more on the [TypeScript Integration](../typescript) page.
