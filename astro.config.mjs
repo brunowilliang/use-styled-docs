@@ -20,6 +20,15 @@ export default defineConfig({
 				alt: 'use-styled logo',
 				replacesTitle: true,
 			},
+			head: [
+				{
+					tag: 'meta',
+					attrs: {
+						property: 'og:image',
+						content: './src/assets/ogimage.png',
+					},
+				},
+			],
 			customCss: ['./src/styles/custom.css'],
 			expressiveCode: {
 				themes: ['dracula', 'light-plus'],
