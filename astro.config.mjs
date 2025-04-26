@@ -2,9 +2,16 @@
 import { defineConfig } from 'astro/config'
 import starlight from '@astrojs/starlight'
 import starlightNextjsTheme from 'starlight-nextjs-theme'
+import vercel from '@astrojs/vercel'
 
 // https://astro.build/config
 export default defineConfig({
+	output: 'server',
+	adapter: vercel({
+		webAnalytics: {
+			enabled: true,
+		},
+	}),
 	integrations: [
 		starlight({
 			plugins: [starlightNextjsTheme()],
