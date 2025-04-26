@@ -3,13 +3,12 @@ title: Hook useStyled
 description: Referência completa para o hook useStyled, o coração da biblioteca para criar componentes estilizados com variantes.
 ---
 
-import { Code } from '@astrojs/starlight/components';
 
 O hook `useStyled` é a principal API da biblioteca `use-styled`. Ele permite criar componentes React e React Native estilizados, encapsulando lógica de estilos, variantes e props padrão de forma declarativa.
 
 ## Assinatura
 
-```typescript
+```typescript 
 function useStyled<T extends React.ElementType, C extends Config<T>>(
   component: T, 
   config: C

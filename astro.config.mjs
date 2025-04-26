@@ -14,8 +14,18 @@ export default defineConfig({
 	}),
 	integrations: [
 		starlight({
+			logo: {
+				dark: './src/assets/logo.png',
+				light: './src/assets/logo_dark.png',
+				alt: 'use-styled logo',
+				replacesTitle: true,
+			},
+			customCss: ['./src/styles/custom.css'],
+			expressiveCode: {
+				themes: ['dracula', 'light-plus'],
+			},
 			plugins: [starlightNextjsTheme()],
-			title: 'use-styled ⚡️',
+			title: 'use-styled',
 			description:
 				'A powerful library for creating React/React Native components',
 			social: [
