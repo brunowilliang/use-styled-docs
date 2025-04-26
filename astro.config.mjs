@@ -14,13 +14,13 @@ export default defineConfig({
 	}),
 	integrations: [
 		starlight({
-			title: 'use-styled',
+			title: 'usestyled',
 			description:
 				'A powerful library for creating React/React Native components',
 			logo: {
 				dark: './src/assets/logo.png',
 				light: './src/assets/logo_dark.png',
-				alt: 'use-styled logo',
+				alt: 'usestyled logo',
 				replacesTitle: true,
 			},
 			head: [
