@@ -14,6 +14,9 @@ export default defineConfig({
 	}),
 	integrations: [
 		starlight({
+			title: 'use-styled',
+			description:
+				'A powerful library for creating React/React Native components',
 			logo: {
 				dark: './src/assets/logo.png',
 				light: './src/assets/logo_dark.png',
@@ -34,9 +37,6 @@ export default defineConfig({
 				themes: ['dracula', 'light-plus'],
 			},
 			plugins: [starlightNextjsTheme()],
-			title: 'use-styled',
-			description:
-				'A powerful library for creating React/React Native components',
 			social: [
 				{
 					icon: 'github',
