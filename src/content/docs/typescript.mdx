@@ -1,0 +1,77 @@
+---
+title: Integração com TypeScript
+description: Entenda como o use-styled utiliza a inferência de tipos do TypeScript para uma experiência de desenvolvimento segura e produtiva.
+---
+
+
+O `use-styled` foi construído com TypeScript em mente, aproveitando ao máximo seus recursos para oferecer segurança de tipos e autocompletar (IntelliSense) durante o desenvolvimento.
+
+## Inferência Automática de Props
+
+A principal mágica do `use-styled` reside na sua capacidade de **inferir automaticamente as props aceitas pelo componente base** que você passa como primeiro argumento. Isso significa que, dentro das seções `base` e `variants` do objeto de configuração, você terá acesso type-safe a todas as props que o componente original aceitaria.
+
+Vamos ver um exemplo prático em React Native:
+
+```tsx
+import React from 'react';
+import { View, type ViewProps } from 'react-native';
+import { useStyled } from 'use-styled';
+
+// --- Exemplo 1: Componente com Props Tipadas ---
+
+// Componente Wrapper que aceita todas as props de uma View
+const ComponentWithProps = (props: ViewProps) => {
+	return <View {...props} />;
+};
+
+export const StyledComponentWithProps = useStyled(ComponentWithProps, {
+	base: {
+		// ✅ OK: Props da ViewProps estão disponíveis aqui!
+		accessibilityLabel: 'Base Label',
+    // onLayout: () => {},
+    // style: { backgroundColor: 'blue' },
+    // etc...
+	},
+	variants: {
+		testVariant: {
+			a: {
+				// ✅ OK: Props da ViewProps também disponíveis!
+        collapsable: false,
+        // style: { opacity: 0.8 }
+			},
+		},
+	},
+});
+
+// --- Exemplo 2: Componente SEM Props Definidas ---
+
+// Componente simples que não declara aceitar props
+const ComponentWithoutProps = () => {
+	return <View />;
+};
+
+export const StyledComponentWithoutProps = useStyled(ComponentWithoutProps, {
+	base: {
+		// ❌ Erro: Nenhuma prop da View está disponível aqui!
+		// accessibilityLabel: 'Erro', 
+    // Tentar adicionar qualquer prop aqui causará um erro de tipo.
+	},
+	variants: {
+		testVariant: {
+			a: {
+        // ❌ Erro: Nenhuma prop da View aqui também.
+        // collapsable: true, 
+      },
+		},
+	},
+});
+```
+
+**Como funciona?**
+
+O hook `useStyled` usa Generics do TypeScript. Ele inspeciona o tipo do primeiro argumento (`component`) e extrai suas `Props`. Essas `Props` (menos as props de variante que você define) são então usadas para tipar o que é permitido dentro de `base` e de cada definição de variante.
+
+*   No `Exemplo 1`, `ComponentWithProps` tem o tipo `(props: ViewProps) => JSX.Element`. O `useStyled` extrai `ViewProps`, e por isso `accessibilityLabel`, `style`, `collapsable`, etc., são válidas dentro da configuração.
+*   No `Exemplo 2`, `ComponentWithoutProps` tem o tipo `() => JSX.Element`. Como ele não declara nenhuma prop, o `useStyled` infere um objeto vazio (`{}`) para as props permitidas na configuração, resultando em erros se você tentar passar props como `accessibilityLabel`.
+
+**Conclusão:** Para obter o máximo do IntelliSense e da segurança de tipos, **sempre garanta que seu componente base tenha suas props corretamente tipadas** (seja um componente intrínseco como `'div'` ou `'button'`, ou um componente funcional customizado).

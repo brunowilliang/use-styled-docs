@@ -1,0 +1,80 @@
+---
+title: ''
+description: A powerful library for creating React/React Native components
+template: splash
+head:
+  - tag: title
+    content: use-styled
+# hero:
+  # tagline: A powerful library for creating React/React Native components
+  # image:
+  #   file: ../../assets/houston.webp
+  # actions:
+  #   - text: Getting Started
+  #     link: /introduction
+  #     icon: right-arrow
+  #   - text: GitHub
+  #     link: https://github.com/brunowilliang/use-styled
+  #     icon: github
+  #     variant: minimal
+---
+
+import { LinkButton } from '@astrojs/starlight/components'
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+
+<div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
+    <h1 style={{ fontSize: '10rem', fontWeight: 'bold', marginBottom: '-3rem' }}>⚡️</h1>
+    <h1 style={{ fontSize: '4rem', fontWeight: 'bold', marginBottom: '-1rem', textAlign: 'center' }}>use-styled</h1>
+  <h4 style={{ fontWeight: 'normal', textAlign: 'center' }}>A powerful library for creating React/React Native components</h4>
+
+  <div style={{ display: 'flex' }}>
+    <LinkButton href="/introduction/" icon='document'>
+      Documentation
+    </LinkButton>
+    <LinkButton href="https://github.com/brunowilliang/use-styled" 
+      target="_blank"
+      variant="minimal" 
+      icon='github'>
+      GitHub
+    </LinkButton>
+  </div>
+
+  <Tabs>
+    <TabItem label="npm" icon="seti:npm">
+      <Code code='npm install use-styled' lang='bash' frame='code' />
+    </TabItem>
+    <TabItem label="yarn" icon="seti:yarn">
+      <Code code='yarn add use-styled' lang='bash' frame='code' />
+    </TabItem>
+    <TabItem label="pnpm" icon="pnpm">
+      <Code code='pnpm add use-styled' lang='bash' frame='code' />
+    </TabItem>
+    <TabItem label="bun" icon="bun">
+      <Code code='bun add use-styled' lang='bash' frame='code' />
+    </TabItem>
+  </Tabs>
+
+  <br />
+
+  <CardGrid>
+    <Card title="API Integrada" icon="puzzle">
+      Defina tudo junto! Estilos, variantes e o componente no mesmo lugar com `useStyled`.
+    </Card>
+    <Card title="Type-Safe por Design" icon="seti:typescript">
+      Chega de erros de tipo! TypeScript garante segurança e autocompletar na sua configuração.
+    </Card>
+    <Card title="Cross-Platform Real" icon="seti:react">
+      Web e Mobile, sem esforço. Escreva seu componente estilizado uma vez, use em todo lugar.
+    </Card>
+    <Card title="Tailwind/NativeWind Ready" icon="rocket">
+      Estilize com Tailwind/NativeWind. Aplique classes utilitárias diretamente nas suas variantes via `className`.
+    </Card>
+  </CardGrid>
+</div>
+
+
+

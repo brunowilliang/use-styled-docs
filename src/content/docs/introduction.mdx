@@ -1,0 +1,116 @@
+---
+title: Introdução
+description: Uma solução leve e elegante para componentes estilizados com suporte a variantes em React e React Native.
+---
+
+`use-styled` é uma biblioteca poderosa e elegante projetada para simplificar a criação de componentes React e React Native estilizados, com suporte robusto a variantes. Ela permite desacoplar a lógica de estilização e variantes da lógica principal do componente, resultando em código mais limpo, reutilizável e fácil de manter.
+
+## Visão Geral
+
+A biblioteca oferece uma abordagem declarativa para estilizar componentes, inspirada por soluções como `styled-components` ou `Stitches`, mas com foco em uma API integrada e flexível. O hook `useStyled` é o coração da biblioteca, permitindo criar componentes com:
+
+-   Estilos base
+-   Variantes configuráveis
+-   Variantes compostas (para combinações específicas)
+-   Valores padrão para variantes
+
+## Principais Características
+
+-   **API Simples e Unificada**: Um único hook `useStyled` para definir tanto a estilização quanto o componente.
+-   **Configuração Declarativa**: Defina `base`, `variants`, `defaultVariants` e `compoundVariants` em um objeto de configuração claro e coeso.
+-   **Type-Safe por Design**: Totalmente escrito em TypeScript, com inferência automática de props e validação de configuração para prevenir erros em tempo de compilação.
+-   **Agnóstico de Plataforma**: Funciona perfeitamente com React para Web (via `style` ou `className`) e React Native (via `style` ou `className` com NativeWind v4).
+-   **Integração com Tailwind/NativeWind**: Use `className` nativamente na configuração para aplicar classes utilitárias.
+-   **Múltiplas Variantes Concorrentes**: Aplique e combine múltiplas variantes simultaneamente (ex: `size`, `color`, `state`).
+-   **Mesclagem Inteligente**: Combina automaticamente `style` (objetos) e `className` (strings) de todas as fontes (base, variantes, compostos, props diretas), usando `tailwind-merge` para resolver conflitos de classes utilitárias quando `className` é usado.
+-   **Encaminhamento Automático de Props**: Props passadas ao componente estilizado que não são nomes de variantes são automaticamente encaminhadas ao componente base (incluindo `ref`).
+
+## Por que o `use-styled` Foi Criado?
+
+Embora bibliotecas como `class-variance-authority` (cva) e `tailwind-variants` sejam ferramentas poderosas para gerenciar variantes de estilo, percebemos uma oportunidade de refinar a experiência do desenvolvedor (DX) ao integrar essa lógica diretamente na criação do componente React/React Native.
+
+Com abordagens como `tailwind-variants`, apesar da excelente lógica de variantes, muitas vezes é necessário um processo em várias etapas para conectar essa lógica a um componente React funcional, especialmente ao usar TypeScript:
+
+1.  Definir a lógica de variantes separadamente.
+2.  Extrai os tipos das variantes.
+3.  Definir a interface de props do componente, incluindo os tipos das variantes.
+4.  Criar o componente React, aplicando manualmente a lógica de variantes e gerenciando a passagem/mesclagem de props como `className`.
+
+
+```tsx
+import { tv, type VariantProps } from 'tailwind-variants';
+ 
+// 1. Define a lógica de variantes separadamente
+export const buttonLogic = tv({
+  base: 'px-4 py-1.5 rounded-full hover:opacity-80',
+  variants: {
+    color: {
+      primary: 'bg-blue-500 text-white',
+      neutral: 'bg-zinc-500 text-black dark:text-white'
+    },
+    flat: {
+      true: 'bg-transparent'
+    }
+  },
+  defaultVariants: {
+    color: 'primary'
+  },
+  compoundVariants: [
+    {
+      color: 'primary',
+      flat: true,
+      class: 'bg-blue-500/40'
+    },
+    {
+      color: 'neutral',
+      flat: true,
+      class: 'bg-zinc-500/20'
+    }
+  ]
+});
+ 
+// 2. Extrai os tipos das variantes
+type ButtonVariants = VariantProps<typeof buttonLogic>;
+ 
+// 3. Define as props do componente, incluindo variantes
+interface ButtonProps extends ButtonVariants {
+  children: React.ReactNode;
+  // outras props específicas do botão, se houver...
+  className?: string; // Precisa manualmente permitir className extra
+}
+ 
+// 4. Cria o componente React, aplicando a lógica manualmente
+export const Button = (props: ButtonProps) => {
+  const { children, className, ...variantProps } = props;
+  return (
+    <button 
+      // Aplica a lógica e mescla com className externo
+      className={buttonLogic({ ...variantProps, className })}
+    >
+      {children}
+    </button>
+  );
+};
+
+// Uso
+<Button color="neutral" flat>Click Me</Button>
+```
+
+Esse processo, embora funcional, pode introduzir um boilerplate e uma desconexão entre a definição dos estilos/variantes e o componente em si.
+
+**A Inspiração do Tamagui e o Objetivo do `use-styled`**
+
+A observação da API do [Tamagui](https://tamagui.dev/), onde a configuração de estilos, variantes e props parece mais integrada à definição do componente, foi fundamental. A API `useStyled(Component, config)` foi projetada para emular essa sensação de coesão.
+
+O objetivo do `use-styled` é, portanto, combinar a poderosa lógica de variantes estabelecida por `cva` e `tailwind-variants` com uma **experiência de criação de componentes mais direta e integrada**, minimizando o boilerplate e aproximando a definição de estilos da declaração do componente, inspirado pela fluidez encontrada no Tamagui.
+
+## Quando e Por Que Usar `use-styled`
+
+`use-styled` brilha especialmente nestes cenários:
+
+-   **Criação de Sistemas de Design**: Ideal para construir um conjunto consistente e reutilizável de componentes de UI.
+-   **Componentes com Múltiplos Estados Visuais**: Simplifica componentes com várias variantes (tamanho, cor, estado, etc.) e suas combinações.
+-   **Desenvolvimento Cross-Platform (React + React Native)**: Oferece uma abordagem unificada para estilização com variantes em ambas as plataformas.
+-   **Projetos com Tailwind CSS / NativeWind**: Integra-se perfeitamente, aproveitando classes utilitárias dentro de um sistema de variantes.
+-   **Refatoração de Lógica Condicional de Estilos**: Ajuda a organizar e simplificar componentes complexos com muitos `if/else` ou ternários para aplicar estilos.
+-   **Preferência por DX Integrada**: Se você valoriza uma API onde a definição de estilos e variantes está intimamente ligada à criação do componente.

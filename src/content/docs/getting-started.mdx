@@ -1,0 +1,52 @@
+---
+title: Getting started
+description: A lightweight, elegant solution for styled components with variant support in React
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import classRegexVSCode from '../../components/codes/settings.json?raw';
+
+
+`use-styled` oferece uma API de variantes poderosa e flexível para React e React Native, permitindo combinar estilos inline, classes TailwindCSS ou NativeWind v4 de forma elegante.
+
+<br />
+
+## Installation
+---
+
+Para usar o `use-styled` em seu projeto, siga os passos abaixo.
+
+<Tabs>
+  <TabItem label="npm" icon="npm">
+    ```bash
+    npm install use-styled
+    ```
+  </TabItem>
+  <TabItem label="yarn" icon="yarn">
+    ```bash
+    yarn add use-styled
+    ```
+  </TabItem>
+  <TabItem label="pnpm" icon="pnpm">
+    ```bash
+    pnpm add use-styled
+    ```
+  </TabItem>
+  <TabItem label="bun" icon="bun">
+    ```bash
+    bun add use-styled
+    ```
+  </TabItem>
+</Tabs>
+
+<br />
+
+## IntelliSense setup (optional)
+---
+
+Para obter autocompleção do Tailwind CSS IntelliSense nas propriedades `className` do seu objeto de configuração, adicione o seguinte às suas configurações do VS Code / Cursor:
+
+<Code code={classRegexVSCode} lang="json" frame='terminal' />
+
+Isso habilitará a autocompleção e o realce de sintaxe para classes Tailwind dentro das propriedades `className` dos seus componentes estilizados.
