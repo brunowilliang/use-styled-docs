@@ -102,17 +102,21 @@ We group the components defined above into their corresponding slots using `useS
 ```tsx
 // --- Compound Component Creation ---
 
-export const Card = useSlot({
-  Root: CardRoot,      // Component for <Card>
-  Header: {
-    Root: CardHeader,  // Component for <Card.Header>
-    Title: CardTitle,  // Component for <Card.Header.Title>
-  },
-  Body: { // Body is now an object with sub-slots
-    Root: CardBody,      // Component for <Card.Body>
-    Text: CardBodyText,  // Component for <Card.Body.Text>
-  },
-  Footer: CardFooter,    // Component for <Card.Footer>
+// Slot for the Header and its sub-slots
+export const CardHeaderSlot = useSlot(CardHeader, { // Component for <Card.Header>
+  Title: CardTitle,  // Component for <Card.Header.Title>
+});
+
+// Slot for the Body and its sub-slots
+export const CardBodySlot = useSlot(CardBody, { // Component for <Card.Body>
+  Text: CardBodyText,  // Component for <Card.Body.Text>
+});
+
+// Main slot for the Card, using the nested slots
+export const Card = useSlot(CardRoot, { // Component for <Card>
+  Header: CardHeaderSlot, // Component for <Card.Header>
+  Body: CardBodySlot,     // Component for <Card.Body>
+  Footer: CardFooter,     // Component for <Card.Footer>
 });
 ```
 
@@ -160,10 +164,10 @@ This example demonstrates how `useSlot` allows building a clean and structured c
 
 ## Benefits
 
-*   **Explicit and Intuitive API**: The `Component.Part` syntax makes it obvious how to use the different sections of the component.
-*   **Organization**: Keeps the definition of all related parts in one place (`useSlot`).
-*   **Reusability**: Base components (`RootFrame`, etc.) can be reused elsewhere if needed.
-*   **Clear Composition**: Facilitates visualizing and composing the component structure.
-*   **Typing (Potential)**: Opens doors for strongly typing the expected children structure and props for each slot.
+*   **Intuitive Usage API**: The `Component.Part.SubPart` syntax for using the component remains clear and declarative.
+*   **Modular and Organized Definitions**: Each `useSlot` call defines a specific component and its direct sub-slots, leading to more focused and manageable code. Deeply nested structures are built by composing these modular slot definitions.
+*   **Enhanced Reusability**: Not only can base styled components be reused, but the defined slot components (like `CardHeaderSlot`) can also be potentially reused in other compound components.
+*   **Explicit Composition**: The new structure makes the composition of complex components more explicit and easier to follow, as nested slots are built by combining individual `useSlot` results.
+*   **Strong Typing Capabilities**: The focused nature of each `useSlot` call can facilitate even more precise TypeScript typings for each component and its associated slots.
 
 `useSlot` offers a powerful and declarative way to build complex UIs and keep your component APIs clean and easy to understand.

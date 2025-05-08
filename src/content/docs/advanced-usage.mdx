@@ -252,8 +252,7 @@ This is ideal for components with distinct parts, like a `Button` containing a s
 
     ```tsx
     // Creates the Button compound component
-    export const Button = useSlot({
-      Root: ButtonRoot,        // Component for <Button>
+    export const Button = useSlot(ButtonRoot, { // Component for <Button>
       Text: ButtonTextContent,  // Component for <Button.Text>
     });
     ```
