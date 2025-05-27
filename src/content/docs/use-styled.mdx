@@ -5,6 +5,10 @@ description: Complete reference for the useStyled hook, the heart of the library
 
 The `useStyled` hook is the main API of the `use-styled` library. It allows you to create styled React and React Native components, encapsulating styling logic, variants, and default props declaratively.
 
+:::tip[New in v1.1.0]
+**Function Composition**: Functions in variants now automatically compose with direct props instead of being overwritten. [Learn more](#function-composition-v110) about this powerful new feature.
+:::
+
 ## Signature
 
 ```typescript
@@ -121,6 +125,53 @@ config: {
 }
 ```
 
+## Function Composition (v1.1.0+)
+
+**New in v1.1.0**: Functions in variants now automatically **compose** with direct props instead of being overwritten.
+
+When you define a function prop (like `onClick`, `onPress`, `onFocus`, etc.) in both a variant and pass it directly to the component, both functions will execute in order:
+
+1. **Variant function** executes first
+2. **Direct prop function** executes second
+
+```tsx
+const Button = useStyled('button', {
+  variants: {
+    haptics: {
+      light: {
+        onClick: () => {
+          // This will execute FIRST
+          Haptics.impactAsync('light');
+        }
+      }
+    }
+  }
+});
+
+// Usage - Both functions will execute
+<Button 
+  haptics="light" 
+  onClick={() => {
+    // This will execute SECOND
+    analytics.track('button_clicked');
+  }}
+>
+  Click me
+</Button>
+```
+
+### Execution Order
+
+Functions are composed in the following order:
+1. **Base** functions
+2. **Variant** functions  
+3. **Compound variant** functions
+4. **Direct prop** functions
+
+### Non-Function Props
+
+Non-function props maintain the same override behavior as before - direct props override variant props.
+
 ## Prop Forwarding
 
 Any prop passed to the component returned by `useStyled` that is **not** a variant name defined in the `config` will be automatically forwarded to the base `Component`.
@@ -148,6 +199,10 @@ const StyledButton = useStyled(Pressable, {
     className: 'flex-row items-center justify-center rounded-lg shadow',
     accessibilityRole: 'button',
     style: { borderWidth: 1, borderColor: 'transparent' }, // Base style
+    onPress: () => {
+      // Base function - executes first
+      console.log('Base button pressed');
+    }
   },
   variants: {
     intent: {
@@ -166,12 +221,26 @@ const StyledButton = useStyled(Pressable, {
     disabled: {
       true: { className: 'opacity-60' },
     },
+    haptics: {
+      light: { 
+        onPress: () => {
+          // Variant function - executes second
+          Haptics.impactAsync('light');
+        }
+      },
+      medium: { 
+        onPress: () => {
+          Haptics.impactAsync('medium');
+        }
+      },
+    },
   },
   defaultVariants: {
     intent: 'primary',
     size: 'md',
     outline: false,
     disabled: false,
+    haptics: false,
   },
   compoundVariants: [
     // Text and border styles for outline variants
@@ -206,7 +275,12 @@ function App() {
       intent="danger"
       size="lg"
       outline
-      onPress={() => console.log('Danger outline lg')}
+      haptics="light"
+      onPress={() => {
+        // Direct function - executes LAST (after base and haptics)
+        analytics.track('delete_button_pressed');
+        console.log('Danger outline lg');
+      }}
       // className="mt-4" // Can also pass className directly
     >
       {/* Ideally, use Button.Text from useSlot here, but for simplicity: */}
@@ -214,6 +288,11 @@ function App() {
     </StyledButton>
   );
 }
+
+// When pressed, this button will execute in order:
+// 1. Base onPress: "Base button pressed"
+// 2. Haptics variant: Haptics.impactAsync('light')
+// 3. Direct onPress: analytics + "Danger outline lg"
 ```
 
 ## TypeScript
