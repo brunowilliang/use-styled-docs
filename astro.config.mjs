@@ -14,7 +14,13 @@ export default defineConfig({
 		},
 	}),
 	integrations: [
-		umami({ id: '2bcaa502-ab29-4e4e-b84d-5a8545c4e7dd' }),
+		umami({
+			id: '2bcaa502-ab29-4e4e-b84d-5a8545c4e7dd',
+			endpointUrl: 'https://umami.apps.brunowillian.com',
+			hostUrl: 'https://umami.apps.brunowillian.com',
+			autotrack: true,
+			domains: ['usestyled.com'],
+		}),
 		starlight({
 			title: 'usestyled',
 			description:
