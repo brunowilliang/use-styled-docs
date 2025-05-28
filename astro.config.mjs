@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config'
 import starlight from '@astrojs/starlight'
 import starlightNextjsTheme from 'starlight-nextjs-theme'
 import vercel from '@astrojs/vercel'
+import umami from '@yeskunall/astro-umami'
 
 // https://astro.build/config
 export default defineConfig({
@@ -13,6 +14,7 @@ export default defineConfig({
 		},
 	}),
 	integrations: [
+		umami({ id: '2bcaa502-ab29-4e4e-b84d-5a8545c4e7dd' }),
 		starlight({
 			title: 'usestyled',
 			description:
