@@ -19,7 +19,6 @@ export default defineConfig({
 			endpointUrl: 'https://umami.apps.brunowillian.com',
 			hostUrl: 'https://umami.apps.brunowillian.com',
 			autotrack: true,
-			domains: ['usestyled.com'],
 		}),
 		starlight({
 			title: 'usestyled',
